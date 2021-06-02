@@ -1,0 +1,8 @@
+# Flask
+venv/
+*.pyc
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
