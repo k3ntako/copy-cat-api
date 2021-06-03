@@ -39,3 +39,11 @@ $ flask db upgrade
 ```
 $ flask run
 ```
+
+## Testing
+
+Run the tests:
+
+```
+$ pytest
+```
