@@ -1,6 +1,11 @@
-# Flask
-venv/
+# Python and Flask
+__pycache__/
+.coverage
+.pytest_cache/
+*.egg-info/
 *.pyc
+instance/
+venv/
 
 # Terraform
 **/.terraform/*
