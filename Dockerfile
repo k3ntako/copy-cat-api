@@ -10,7 +10,7 @@ WORKDIR /copycat
 RUN pip install -r requirements.txt
 
 ENV FLASK_APP=copycat
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
 COPY . /copycat
 

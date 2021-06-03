@@ -6,11 +6,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.sql import func
 
+import config
+
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/copy_cat"
+    env_config = os.getenv("APP_SETTINGS", "config.LocalConfig")
+    app.config.from_object(env_config)
     db = SQLAlchemy(app)
     migrate = Migrate(app, db)
 
