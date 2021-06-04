@@ -15,35 +15,45 @@ Production Health Check: <http://copy-cat-api-prod.us-east-1.elasticbeanstalk.co
 
 1. Clone this repo
 
-2. Install dependencies
+2. Initialize `venv` (only first time you clone the repo)
 
-```
-$ pip install -r requirements.txt
-```
+   ```
+   $ python3 -m venv venv
+   ```
 
-2. Start `venv`
+3. Start `venv`
 
-```
-$ . venv/bin/activate
-```
+   ```
+   $ . venv/bin/activate
+   ```
 
-3. Set environment variable
+4. Install dependencies
 
-```
-$ export FLASK_APP=copycat
-```
+   ```
+   $ pip install -r requirements.txt
+   ```
 
-4. Setup database
+5. Create database (only first time you clone the repo)
 
-```
-$ flask db upgrade
-```
+   - Follow the steps in the _Initial Database Setup_ section
 
-5. Start flask app
+6. Set environment variable
 
-```
-$ flask run
-```
+   ```
+   $ export FLASK_APP=src.copycat:create_app
+   ```
+
+7. Run migrations on database
+
+   ```
+   $ flask db upgrade
+   ```
+
+8. Start flask app
+
+   ```
+   $ flask run
+   ```
 
 ## Testing
 
@@ -55,17 +65,17 @@ $ pytest
 
 ## Initial Database Setup
 
-Create a database locally.
+Create a local PostgreSQL database with the name `copy_cat`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
 
 ```
 $ psql
 $ CREATE DATABASE copy_cat;
 ```
 
-If there is no `migrations` directory in the root of this directory, you will need to run the following to create the migrations.
+Unless you deleted the `migrations` directory, you can ignore this step. A `migrations` directory will be present in the root directory of this project, but if it does not exist, you will need to run the following commands to create the migrations.
 
 ```
-$ export FLASK_APP=copycat
+$ export FLASK_APP=src.copycat:create_app
 $ flask db init
 $ flask db migrate
 $ flask db upgrade
