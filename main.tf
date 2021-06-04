@@ -171,3 +171,14 @@ resource "aws_security_group" "service_security_group" {
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
 }
+
+resource "aws_db_instance" "copy_cat_prod_database" {
+  allocated_storage    = 10
+  engine               = "postgres"
+  engine_version       = "13.2"
+  instance_class       = "db.t3.micro"
+  name                 = "copy_cat"
+  username             = "postgres"
+  password             = "postgres"
+  skip_final_snapshot  = true
+}

@@ -6,8 +6,10 @@ __pycache__/
 *.pyc
 instance/
 venv/
+dist/
 
 # Terraform
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+
