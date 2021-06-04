@@ -3,29 +3,31 @@ import os
 from flask import Flask
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from sqlalchemy.sql import func
 
-import config
+db = SQLAlchemy()
+migrate = Migrate()
 
-def create_app(test_config=None):
+def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
-    env_config = os.getenv("APP_SETTINGS", "config.LocalConfig")
+    env_config = os.getenv("APP_CONFIG", "config.LocalConfig")
     app.config.from_object(env_config)
-    db = SQLAlchemy(app)
-    migrate = Migrate(app, db)
-
+    db.init_app(app)
+    migrate.init_app(app, db)
+    with app.app_context():
+        upgrade()
+            
     class TextModel(db.Model):
         __tablename__ = 'texts'
 
         id = db.Column(db.Integer, primary_key=True)
         text_string = db.Column(db.String())
-        created_date = db.Column(db.DateTime, default=func.now())
-        time_updated = db.Column(db.DateTime(timezone=True), onupdate=func.now(), default=func.now())
+        created_at = db.Column(db.DateTime, default=func.now())
+        updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now(), default=func.now())
 
         def __init__(self, text_string):
-            print(text_string)
             self.text_string = text_string
 
         def __repr__(self):
@@ -40,6 +42,5 @@ def create_app(test_config=None):
     @app.route('/health')
     def health_check():
         return {"status": "UP"}
-
 
     return app
