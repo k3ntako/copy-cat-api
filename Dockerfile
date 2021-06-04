@@ -15,9 +15,11 @@ ENV APP_CONFIG=config.ProductionConfig
 
 COPY . /copycat
 
-RUN flask db upgrade
+# RUN flask db upgrade
 
 EXPOSE 5000
+
+RUN ["chmod", "+x", "./start.sh"]
 
 CMD [ "waitress-serve", "--port=5000", "--call", "copycat:create_app" ]
 
