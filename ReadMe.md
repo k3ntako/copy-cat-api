@@ -57,6 +57,8 @@ Production Health Check: <http://copy-cat-api-prod.us-east-1.elasticbeanstalk.co
 
 ## Testing
 
+Make sure you have installed the dependencies first.
+
 Run the tests:
 
 ```
