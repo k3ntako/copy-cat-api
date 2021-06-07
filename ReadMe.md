@@ -30,7 +30,7 @@ $ . venv/bin/activate
 3. Set environment variable
 
 ```
-$ export FLASK_APP=copycat
+$ export FLASK_APP=src.copycat:create_app
 ```
 
 4. Setup database
@@ -65,7 +65,7 @@ $ CREATE DATABASE copy_cat;
 If there is no `migrations` directory in the root of this directory, you will need to run the following to create the migrations.
 
 ```
-$ export FLASK_APP=copycat
+$ export FLASK_APP=src.copycat:create_app
 $ flask db init
 $ flask db migrate
 $ flask db upgrade
