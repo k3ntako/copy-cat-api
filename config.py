@@ -1,4 +1,7 @@
 import os
+import json
+
+from src.utilities.encrypt_secrets import decrypt_secrets
 
 class Config:
     DEBUG = False
@@ -7,15 +10,20 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
-    dialect = "postgresql"
-    driver = "psycopg2"
-    user = os.getenv('RDS_USERNAME')
-    password = os.getenv('RDS_PASSWORD')
-    hostname = os.getenv('RDS_HOSTNAME')
-    port = os.getenv('RDS_PORT')
-    db_name = os.getenv('RDS_DB_NAME')
+    SECRETS_PATH = "./encrypted-secrets-prod"
+    if os.getenv('SECRETS_KEY'):
+        secretsJsonStr = decrypt_secrets(SECRETS_PATH, os.getenv('SECRETS_KEY'))
+        secretsJson = json.load(secretsJsonStr)
+        
+        dialect = "postgresql"
+        driver = "psycopg2"
+        user = secretsJson['RDS_USERNAME']
+        password = secretsJson['RDS_PASSWORD']
+        hostname = secretsJson['RDS_HOSTNAME']
+        port = secretsJson['RDS_PORT']
+        db_name = secretsJson['RDS_DB_NAME']
 
-    SQLALCHEMY_DATABASE_URI = f'{dialect}+{driver}://{user}:{password}@{hostname}:{port}/{db_name}'
+        SQLALCHEMY_DATABASE_URI = f'{dialect}+{driver}://{user}:{password}@{hostname}:{port}/{db_name}'
 
 class LocalConfig(Config):
     DEBUG = True

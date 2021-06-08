@@ -1,6 +1,6 @@
 import logging
 from waitress import serve
-from copycat import create_app
+from src.copycat import create_app
 
 logger = logging.getLogger('waitress')
 logger.setLevel(logging.INFO)

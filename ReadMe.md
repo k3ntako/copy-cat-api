@@ -65,7 +65,7 @@ Run the tests:
 $ pytest
 ```
 
-## Initial Database Setup
+## Initial Local Database Setup
 
 Create a local PostgreSQL database with the name `copy_cat`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
 
@@ -85,32 +85,65 @@ $ flask db upgrade
 
 ## Initial Deploy to AWS Elastic Beanstalk
 
-1. Assume role for AWS role for deploying.
+1.  Assume role for AWS role for deploying.
 
-2. Initialize application
+2.  Create database using Terraform
 
-   ```
-   $ eb init
-   ```
+    - Make sure to change anything inside brackets (`[]`) below.
 
-3. Create environment
+    ```
+    $ export TF_VAR_RDS_USERNAME=[database username]
+    $ export TF_VAR_RDS_PASSWORD=[database password]
+    $ export TF_VAR_RDS_PORT=[database port]
+    $ TF_VAR_RDS_DB_NAME=[database name]
+    $ terraform init
+    $ terraform apply
+    ```
 
-   ```
-   $ eb create
-   ```
+3.  Save database config as secret
 
-4. Go AWS console and add a Postgres database.
+    - If you have an existing password for your secrets set it as an environment variable. If left blank, it will generate and print it out.
 
-   - Select application's environment
-   - Go to "Configuration"
-   - Scroll to bottom and click "Edit" next to "Database"
-   - Set the Postgres config and click "Apply"
+    ```
+    $ export SECRETS_KEY=[secret password]
+    ```
 
-5. Set the environment variable for configuration
+    - After deploying the database using Terraform, you should see an output in the console that starts with `rds_hostname =`. Copy the URL after the `=` (RDS endpoint), and set it as an environment variable as shown below (replace the bracket (`[]`) and everything inside with the URL).
 
-   ```
-   eb setenv APP_CONFIG=config.ProductionConfig
-   ```
+    ```
+      $ export RDS_HOSTNAME=[RDS enpoint]
+      $ python3 ./src/utilities/encrypt_secrets.py
+    ```
+
+    - Double check that the output looks correct.
+    - If the password is new or it has changed save it to 1Password and deploy it to the environment.
+
+    ```
+    $ eb setenv=[secret password]
+    ```
+
+4.  Initialize application
+
+    ```
+    $ eb init
+    ```
+
+5.  Create environment
+
+    ```
+    $ eb create
+    ```
+
+6.  Once Elastic Beanstalk is done deploying, you will need to allow the environment to access the database.
+    - Determine the Elastic Beanstalk Environment's Security Group ID. Under the "Configuration" page, click the "Edit" button next to "Instances". It should start with `sg-`.
+    - Go to the [RDS console](https://console.aws.amazon.com/rds/home) and find the database created by Terraform.
+    - Inside the "Connectivity & security" tab, click on the "VPC security groups" link.
+    - Under the "Actions" dropdown, click "Edit inbound rules".
+    - Click "Add rule".
+    - Set the "Type" to "PostgreSQL".
+    - Start typing the Elastic Beanstalk enviornment's Security Group into the input under "Source" and select the one for the current environment.
+    - Click "Save rules".
+    - More on this [here](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/rds-external-defaultvpc.html).
 
 ## Deploy New Version to Production
 
