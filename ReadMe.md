@@ -57,13 +57,15 @@ Production Health Check: <http://copy-cat-api-prod.us-east-1.elasticbeanstalk.co
 
 ## Testing
 
+Make sure you have installed the dependencies first.
+
 Run the tests:
 
 ```
 $ pytest
 ```
 
-## Initial Database Setup
+## Initial Local Database Setup
 
 Create a local PostgreSQL database with the name `copy_cat`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
 
@@ -83,32 +85,65 @@ $ flask db upgrade
 
 ## Initial Deploy to AWS Elastic Beanstalk
 
-1. Assume role for AWS role for deploying.
+You probably do not need to follow these steps.
 
-2. Initialize application
+1.  Assume role for AWS role for deploying.
 
-   ```
-   $ eb init
-   ```
+2.  Initialize application
 
-3. Create environment
+    ```
+    $ eb init
+    ```
 
-   ```
-   $ eb create
-   ```
+3.  Create environment
 
-4. Go AWS console and add a Postgres database.
+    ```
+    $ eb create
+    ```
 
-   - Select application's environment
-   - Go to "Configuration"
-   - Scroll to bottom and click "Edit" next to "Database"
-   - Set the Postgres config and click "Apply"
+4.  Create database using Terraform
 
-5. Set the environment variable for configuration
+    - Change anything inside brackets (`[]`) below.
 
-   ```
-   eb setenv APP_CONFIG=config.ProductionConfig
-   ```
+    ```
+    $ export TF_VAR_RDS_USERNAME=[database username]
+    $ export TF_VAR_RDS_PASSWORD=[database password]
+    $ export TF_VAR_RDS_PORT=[database port]
+    $ TF_VAR_RDS_DB_NAME=[database name]
+    $ terraform init
+    $ terraform apply
+    ```
+
+    - After deploying the database using Terraform, you should see an output in the console that starts with `rds_hostname =`. You will need the URL after the `=` (RDS hostname) in the next step.
+
+5.  Save secrets in repo.
+
+    - Create JSON in root directory called: `decrypted-secrets-[env].json`. Change `[env]` with environment (`prod`, `dev` or `testing`).
+    - Update the JSON with the secrets (get the `RDS_HOSTNAME` from the previous step):
+
+    ```
+    {
+       "RDS_USERNAME": [username],
+       "RDS_PASSWORD": [password],
+       "RDS_HOSTNAME": [hostname],
+       "RDS_PORT": [port],
+       "RDS_DB_NAME": [db name],
+    }
+    ```
+
+    - Follow the steps in `Update Secrets File` below to encrypt the secrets.
+
+6.  Once Elastic Beanstalk is done deploying, you will need to allow the environment to access the database.
+    - Determine the Elastic Beanstalk Environment's Security Group ID. Under the "Configuration" page, click the "Edit" button next to "Instances". It should start with `sg-`.
+    - Go to the [RDS console](https://console.aws.amazon.com/rds/home) and find the database created by Terraform.
+    - Inside the "Connectivity & security" tab, click on the "VPC security groups" link.
+    - Click the "Actions" dropdown and select "Edit inbound rules".
+    - Click "Add rule".
+    - Set the "Type" to "PostgreSQL".
+    - Start typing the Elastic Beanstalk enviornment's Security Group into the input under "Source" and select the one for the current environment.
+    - Click "Save rules".
+    - Restart the Elastic Beanstalk server.
+    - More on this [here](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/rds-external-defaultvpc.html).
 
 ## Deploy New Version to Production
 
@@ -119,3 +154,41 @@ $ flask db upgrade
    ```
    $ eb deploy
    ```
+
+3. If there were Terraform changes, make sure to apply them:
+   ```
+   $ terraform apply
+   ```
+
+## Update Secrets File
+
+1. Decrypt existing secrets. Skip if no secrets exist for the environment.
+
+   - Replace `[env]` with environment: `prod`, `dev`, or `testing`.
+   - Replace `[password]` with the password found in 1Password.
+
+   ```
+     $ python3 ./src/utilities/decrypt_secrets.py [env] [password]
+   ```
+
+   - There will be a newly generated file called `decrypted-secrets-prod.json` in the root directory. It is ignored by git, so it might be a bit harder to find.
+
+2. Update the JSON file with new environment variables (case sensitive).
+
+3. Encrypt the env variables. Make sure to use the env and password from 1Password.
+
+   ```
+   $ python3 ./src/utilities/encrypt_secrets.py [env] [password]
+   ```
+
+   - Confirm that the output looks correct.
+
+4. If the password has changed save it to 1Password.
+
+   - If the password for production is new, make sure to update the environment variable:
+
+   ```
+   $ eb setenv SECRETS_KEY=[password]
+   ```
+
+5. Commit the encrypted file and do NOT commit the decrypted file.

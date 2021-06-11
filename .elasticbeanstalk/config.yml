@@ -1,7 +1,6 @@
 branch-defaults:
-  master:
-    environment: copy-cat-api-prod
-    group_suffix: null
+  main:
+    environment: copy-cat-api-production
 global:
   application_name: copy-cat-api
   branch: null
