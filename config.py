@@ -13,7 +13,7 @@ class ProductionConfig(Config):
     SECRETS_PATH = "./encrypted-secrets-prod"
     if os.getenv('SECRETS_KEY'):
         secretsJsonStr = decrypt_secrets(SECRETS_PATH, os.getenv('SECRETS_KEY'))
-        secretsJson = json.load(secretsJsonStr)
+        secretsJson = json.loads(secretsJsonStr)
         
         dialect = "postgresql"
         driver = "psycopg2"
@@ -33,5 +33,4 @@ class LocalConfig(Config):
 class TestingConfig(Config):
     DEBUG = True
     DEVELOPMENT = True
-
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'postgresql+psycopg2://postgres:postgres@localhost:5432/copy_cat_testing')

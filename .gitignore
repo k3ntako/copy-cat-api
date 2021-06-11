@@ -12,3 +12,6 @@ dist/
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+
+# Secrets
+decrypted-secrets-*

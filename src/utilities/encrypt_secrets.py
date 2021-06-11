@@ -1,5 +1,4 @@
-import os
-import json
+import sys
 
 from cryptography.fernet import Fernet
 
@@ -24,20 +23,27 @@ def decrypt_secrets(secrets_path, key):
   content = read_file(secrets_path)
   return decrypt_str(key, content)
 
-def generate_secrets_file():
-  key = os.getenv('SECRETS_KEY', generate_key())
+def generate_secrets_file_from_json_file():
+  try:
+    env = sys.argv[1]
+  except:
+    sys.exit("Environment (prod, dev, or testing) must be passed in")
 
-  secrets_json = {
-    'RDS_USERNAME': os.getenv('TF_VAR_RDS_USERNAME'),
-    'RDS_PASSWORD': os.getenv('TF_VAR_RDS_PASSWORD'),
-    'RDS_HOSTNAME': os.getenv('RDS_HOSTNAME'),
-    'RDS_PORT': os.getenv('TF_VAR_RDS_PORT'),
-    'RDS_DB_NAME': os.getenv('TF_VAR_RDS_DB_NAME'),
-  }
-  encrypt_secrets("./encrypted-secrets-prod", key, json.dumps(secrets_json))
+  try:
+    secrets = read_file(f"./decrypted-secrets-{env}.json")
+  except FileNotFoundError:
+    sys.exit("File not found. Make sure it's relative to where you are calling the function.")
+  
+  try:
+    key = sys.argv[2]
+  except:
+    key = generate_key().decode()
+
+  encrypt_secrets(f"./encrypted-secrets-{env}", key, secrets)
 
   print(f"key: {key}")
   print(decrypt_secrets("./encrypted-secrets-prod", key))
+  print("!!! IMPORTANT: do not commit the original JSON file !!!")
 
 if __name__ == "__main__":
-  generate_secrets_file()
+  generate_secrets_file_from_json_file()

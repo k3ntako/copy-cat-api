@@ -11,13 +11,13 @@ variable "RDS_PASSWORD" {
 }
 
 variable "RDS_PORT" {
-  description = "Database administrator username"
+  description = "Database port"
   type        = number
   sensitive   = true
 }
 
 variable "RDS_DB_NAME" {
-  description = "Database administrator password"
+  description = "Database name"
   type        = string
   sensitive   = true
 }
