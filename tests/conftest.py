@@ -1,3 +1,4 @@
+import os
 import contextlib
 
 import pytest
@@ -10,6 +11,7 @@ from src.copycat.database import db
 @pytest.fixture
 def app():
     """Create and configure a new app instance for each test."""
+    os.environ["APP_CONFIG"] = "config.TestingConfig"
     app = create_app()
 
     yield app

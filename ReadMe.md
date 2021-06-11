@@ -67,11 +67,11 @@ $ pytest
 
 ## Initial Local Database Setup
 
-Create a local PostgreSQL database with the name `copy_cat`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
+Create local PostgreSQL databases: `copy_cat` and `copy_cat_testing`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
 
 ```
-$ psql
-$ CREATE DATABASE copy_cat;
+$ psql -c 'CREATE DATABASE copy_cat;'
+$ psql -c 'CREATE DATABASE copy_cat_testing;'
 ```
 
 Unless you deleted the `migrations` directory, you can ignore this step. A `migrations` directory will be present in the root directory of this project, but if it does not exist, you will need to run the following commands to create the migrations.

@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 
+from src.copycat.controllers import health_check, texts
 from src.copycat.database import init_db
 
 def create_app():
@@ -17,7 +18,6 @@ def create_app():
     except OSError:
         pass    
 
-    from src.copycat.controllers import health_check, texts
 
     app.register_blueprint(health_check.bp)
     app.register_blueprint(texts.bp)
