@@ -2,8 +2,6 @@ import os
 import contextlib
 
 import pytest
-from sqlalchemy.schema import MetaData
-from sqlalchemy import create_engine
 
 from src.copycat import create_app
 from src.copycat.database import db
