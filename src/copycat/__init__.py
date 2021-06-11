@@ -16,8 +16,7 @@ def create_app():
     try:
         os.makedirs(app.instance_path)
     except OSError:
-        pass    
-
+        pass
 
     app.register_blueprint(health_check.bp)
     app.register_blueprint(texts.bp)
