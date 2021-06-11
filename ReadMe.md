@@ -89,13 +89,17 @@ You probably do not need to follow these steps.
 
 1.  Assume role for AWS role for deploying.
 
-2.  Initialize application
+    - You will need to install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+2.  Initialize Elastic Beanstalk application
+
+    - You will need to install the [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
 
     ```
     $ eb init
     ```
 
-3.  Create environment
+3.  Create Elastic Beanstalk environment
 
     ```
     $ eb create
@@ -192,3 +196,13 @@ You probably do not need to follow these steps.
    ```
 
 5. Commit the encrypted file and do NOT commit the decrypted file.
+
+## Migrations
+
+If you have made a change to a database model, make sure to create the migrations.
+
+- When the server starts, it will run the migrations.
+
+```
+$ flask db migrate
+```
