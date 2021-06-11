@@ -67,9 +67,9 @@ def test_post_validates_length(app, client):
     """POST text endpoint should not allow text longer than the limit"""
     res = client.post(
         '/api/texts',
-        data=json.dumps(dict(text_string="x" * 3001)),
+        data=json.dumps(dict(text_string="x" * 251)),
         content_type='application/json'
     ) 
     
     assert res.status == '400 BAD REQUEST'
-    assert res.json['error'] == "Text cannot be longer than 3000 characters"
+    assert res.json['error'] == "Text cannot be longer than 250 characters"

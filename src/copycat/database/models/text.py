@@ -17,7 +17,7 @@ class Text(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=datetime.datetime.utcnow, default=datetime.datetime.utcnow)
     deleted_at = db.Column(db.DateTime, nullable=True, default=None)
 
-    MAX_TEXT_LENGTH = 3000
+    MAX_TEXT_LENGTH = 250
 
     def __init__(self, text_string):
         self.text_string = text_string
@@ -38,5 +38,5 @@ class Text(db.Model):
         assert isinstance(text_string, str), "Text must be a string"
 
         assert len(text_string.strip()) > 0, "Text must be at least one character long"
-        assert len(text_string.strip()) <= self.MAX_TEXT_LENGTH, "Text cannot be longer than 3000 characters"
+        assert len(text_string.strip()) <= self.MAX_TEXT_LENGTH, "Text cannot be longer than 250 characters"
         return text_string
