@@ -17,8 +17,18 @@ def create_app():
     except OSError:
         pass    
 
-    from src.copycat.controllers import health_check
+    from src.copycat.controllers import health_check, texts
 
     app.register_blueprint(health_check.bp)
+    app.register_blueprint(texts.bp)
+
+    @app.errorhandler(AssertionError)
+    def handle_assertion_error(e):
+        message = str(e)
+
+        if len(message) == 0:
+            message = "Invalid client request parameter"
+
+        return {'error': message}, 400
 
     return app
