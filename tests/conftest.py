@@ -5,6 +5,7 @@ import pytest
 
 from src.copycat import create_app
 from src.copycat.database import db
+from src.copycat.database.models.text import Text
 
 @pytest.fixture
 def app():
@@ -24,3 +25,17 @@ def app():
 def client(app):
     """A test client for the app."""
     return app.test_client()
+
+# Commits to database mock text rows
+# The number of rows can be passed in using @pytest.mark.parametrize
+@pytest.fixture
+def texts(app, request):
+    """Mock text entries in database."""
+    with app.app_context():
+        for i in range(1, request.param + 1):
+            text = Text(f"Example text {i}")
+            db.session.add(text)
+
+        db.session.commit()
+
+    return text
