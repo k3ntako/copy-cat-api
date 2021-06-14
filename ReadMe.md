@@ -67,11 +67,11 @@ $ pytest
 
 ## Initial Local Database Setup
 
-Create a local PostgreSQL database with the name `copy_cat`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
+Create local PostgreSQL databases: `copy_cat` and `copy_cat_testing`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demostrated below.
 
 ```
-$ psql
-$ CREATE DATABASE copy_cat;
+$ psql -c 'CREATE DATABASE copy_cat;'
+$ psql -c 'CREATE DATABASE copy_cat_testing;'
 ```
 
 Unless you deleted the `migrations` directory, you can ignore this step. A `migrations` directory will be present in the root directory of this project, but if it does not exist, you will need to run the following commands to create the migrations.
@@ -89,13 +89,17 @@ You probably do not need to follow these steps.
 
 1.  Assume role for AWS role for deploying.
 
-2.  Initialize application
+    - You will need to install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+2.  Initialize Elastic Beanstalk application
+
+    - You will need to install the [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
 
     ```
     $ eb init
     ```
 
-3.  Create environment
+3.  Create Elastic Beanstalk environment
 
     ```
     $ eb create
@@ -192,3 +196,13 @@ You probably do not need to follow these steps.
    ```
 
 5. Commit the encrypted file and do NOT commit the decrypted file.
+
+## Migrations
+
+If you have made a change to a database model, make sure to create the migrations.
+
+- When the server starts, it will run the migrations.
+
+```
+$ flask db migrate
+```
