@@ -1,8 +1,9 @@
 from flask import json
 
+import pytest
+
 from src.copycat.database import db
 from src.copycat.database.models.text import Text
-    
 
 def test_post_returns_created_text(client):
     """POST text endpoint should return the newly created text"""
@@ -91,3 +92,44 @@ def test_post_validates_length(client):
     
     assert res.status == '400 BAD REQUEST'
     assert res.json['error'] == "Text cannot be longer than 250 characters"
+
+def test_get_returns_empty_array_when_no_texts_in_db(client):
+    """GET text endpoint should return empty array if no texts exist"""
+    res = client.get('/api/texts') 
+    
+    assert res.status == '200 OK'
+    assert res.json == []
+
+@pytest.mark.parametrize('texts', [1], indirect=True)
+def test_get_returns_text_from_database(client, texts):
+    """GET text endpoint should return a text entry from database"""
+    res = client.get('/api/texts')
+
+    assert res.status == '200 OK'
+    assert isinstance(res.json, list)
+    assert len(res.json) == 1
+    assert res.json[0]['text_string'] == 'Example text 1'
+    assert isinstance(res.json[0]['id'], str)
+    assert isinstance(res.json[0]['created_at'], str)
+    assert isinstance(res.json[0]['updated_at'], str)
+
+@pytest.mark.parametrize('texts', [2], indirect=True)
+def test_get_returns_multiple_texts_from_database(client, texts):
+    """GET text endpoint should multiple text entries from database"""
+    res = client.get('/api/texts')
+
+    assert isinstance(res.json, list)
+    assert len(res.json) == 2
+    assert res.json[0]['text_string'] == 'Example text 2'
+    assert res.json[1]['text_string'] == 'Example text 1'
+
+@pytest.mark.parametrize('texts', [11], indirect=True)
+def test_get_returns_10_texts_from_database(client, texts):
+    """GET text endpoint should return the last 10 texts in reverse chronological order"""
+    res = client.get('/api/texts')
+
+    assert isinstance(res.json, list)
+    assert len(res.json) == 10
+    assert res.json[0]['text_string'] == 'Example text 11'
+    assert res.json[9]['text_string'] == 'Example text 2'
+
