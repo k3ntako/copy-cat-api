@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from src.copycat.controllers import health_check, texts
 from src.copycat.database import init_db
@@ -11,6 +12,8 @@ def create_app():
     env_config = os.getenv("APP_CONFIG", "config.LocalConfig")
     app.config.from_object(env_config)
     init_db(app)
+    
+    CORS(app)
             
     # ensure the instance folder exists
     try:
