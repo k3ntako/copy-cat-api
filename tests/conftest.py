@@ -1,5 +1,8 @@
-import os
+import sys, os
 import contextlib
+
+testPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, testPath + '/../')
 
 import pytest
 
