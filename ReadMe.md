@@ -175,7 +175,7 @@ $ flask db upgrade
    - Replace `[password]` with the password found in 1Password.
 
    ```
-     $ python3 ./src/utilities/decrypt_secrets.py [env] [password]
+     $ python3 ./src/utilities/decrypt_secrets.py --env [env] --key [password]
    ```
 
    - There will be a newly generated file called `decrypted-secrets-prod.json` in the root directory. It is ignored by git, so it might be a bit harder to find.
@@ -185,7 +185,7 @@ $ flask db upgrade
 3. Encrypt the env variables. Make sure to use the env and password from 1Password.
 
    ```
-   $ python3 ./src/utilities/encrypt_secrets.py [env] [password]
+   $ python3 ./src/utilities/encrypt_secrets.py --env [env] --key [password]
    ```
 
    - Confirm that the output looks correct.

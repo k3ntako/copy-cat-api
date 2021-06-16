@@ -1,18 +1,20 @@
-import sys
+import argparse
 
-from src.utilities.encrypt_secrets import generate_key, decrypt_secrets
-from src.utilities.file_io import write_to_file
+from src.utilities.encrypt_secrets import decrypt_secrets
+from src.utilities.file_io import FileIO
+
+def decrypt_to_json_file(fileIO, env, key):
+    secrets = decrypt_secrets(fileIO, f"./encrypted-secrets-{env}", key)
+    fileIO.write_to_file(f"./decrypted-secrets-{env}.json", secrets)
 
 if __name__ == "__main__":
-  try:
-    env = sys.argv[1]
-  except:
-    sys.exit("Environment (prod, dev, or testing) must be passed in")
+    parser = argparse.ArgumentParser(description='Decrypt secrets for repo')
+    parser.add_argument('--env', dest='env', type=str, help='prod, testing, or dev')
+    parser.add_argument('--key', dest='key', type=str, help='Key saved in 1Password')
 
-  try:
-    key = sys.argv[2]
-  except:
-    key = generate_key()
+    args = parser.parse_args()
 
-  secrets = decrypt_secrets(f"./encrypted-secrets-{env}", key)
-  write_to_file(f"./decrypted-secrets-{env}.json", secrets)
+    fileIO = FileIO()
+
+    decrypt_to_json_file(fileIO, args.env, args.key)
+    
