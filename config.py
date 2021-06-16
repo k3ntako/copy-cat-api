@@ -2,6 +2,7 @@ import os
 import json
 
 from src.utilities.encrypt_secrets import decrypt_secrets
+from src.utilities.file_io import FileIO
 
 class Config:
     DEBUG = False
@@ -12,7 +13,7 @@ class Config:
 class ProductionConfig(Config):
     SECRETS_PATH = "./encrypted-secrets-prod"
     if os.getenv('SECRETS_KEY'):
-        secretsJsonStr = decrypt_secrets(SECRETS_PATH, os.getenv('SECRETS_KEY'))
+        secretsJsonStr = decrypt_secrets(FileIO(), SECRETS_PATH, os.getenv('SECRETS_KEY'))
         secretsJson = json.loads(secretsJsonStr)
         
         dialect = "postgresql"
