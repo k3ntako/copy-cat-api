@@ -3,6 +3,7 @@ appdirs==1.4.4
 attrs==21.2.0
 cffi==1.14.5
 click==8.0.1
+coverage==5.5
 cryptography==3.4.7
 distlib==0.3.2
 filelock==3.0.12
@@ -27,6 +28,7 @@ py==1.10.0
 pycparser==2.20
 pyparsing==2.4.7
 pytest==6.2.4
+pytest-cov==2.12.1
 python-dateutil==2.8.1
 python-dotenv==0.17.1
 python-editor==1.0.4

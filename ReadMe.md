@@ -66,6 +66,12 @@ Run the tests:
 $ pytest
 ```
 
+### Test Coverage
+
+```
+$ pytest --cov=src tests/
+```
+
 ## Initial Local Database Setup
 
 Create local PostgreSQL databases: `copy_cat` and `copy_cat_testing`. Make sure it's accessible at `localhost:5432`. One way to create it is by using the [`psql`](https://www.postgresql.org/docs/current/app-psql.html) command line tool as demonstrated below:
