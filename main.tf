@@ -19,6 +19,6 @@ resource "aws_db_instance" "copy_cat_prod" {
   name                   = var.RDS_DB_NAME
   username               = var.RDS_USERNAME
   password               = var.RDS_PASSWORD
-  port = var.RDS_PORT
+  port                   = var.RDS_PORT
   skip_final_snapshot    = true
 }
